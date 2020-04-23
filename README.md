@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Spotify Listening Habits</title>
+	<link href="https://fonts.googleapis.com/css2?family=Sen:wght@400;700;800&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="https://unpkg.com/intersection-observer"></script>
+	<script src="https://unpkg.com/scrollama"></script>
+</head>
+<style type="text/css">
+	body, html {
+		top:0;
+		left:0;
+		margin:0;
+		font-family:'Helvetica Neue', sans-serif;
+	}
+	nav	{
+		background-color:white;
+		position:fixed;
+		width:100%;
+		display:flex;
+		justify-content: center;
+		align-items:center;
+		border-bottom:0.05em solid black;
+	}
+	.title {
+		height:50vh;
+		color:white;
+		background-color:black;
+/*		background-image:url('https://i.pinimg.com/originals/7f/43/1c/7f431c9e6991b1a83d79e359dc09c99d.gif');*/
+		background-repeat: no-repeat;
+		background-attachment: fixed;
+		background-position: left top;
+		background-size: auto 100%;
+	}
+	.title h1 {
+		font-size:5em;
+	}
+	.title h2 {
+		font-size:1em;
+		font-weight:400;
+	}
+	.header {
+		text-align:center;
+		display:flex;
+		justify-content:center;
+		align-items:center;
+		border:0.5em solid black;
+		padding:5% 0%;
+		animation: fadeIn 0.5s ease-in-out;
+	}
+	.header h1{
+		font-family:'Helvetica Neue', sans-serif;
+		font-weight:800;
+		margin:0;
+	}
+	.header h2 {
+		margin:0;
+	}
+	.sticky {
+		float:right;
+		top:25%;
+		position:sticky;
+		width:50%;
+		display:inline-flex;
+					background-color:white;
+	}
+	.leftside{
+		background-color:black;
+		color:white;
+		width: 30%;
+    	padding: 5% 10% 5% 5%;
+	}
+	.progressive{
+		width:100%;
+		display:block;
+		margin-bottom:100%!important;
+	}
+	.end {
+		margin-bottom:5%!important;
+	}
+	#counter {
+		width:100%;
+		font-size:10em;
+		text-align:center;
+		margin:0;
+		padding:0%;
+		line-height:1em;
+		font-weight: 800;
+    	letter-spacing: -0.05em;
+	}
+	#counter h2{
+		text-align:center;
+	}
+	.text {
+		margin:5%;
+		line-height:2em;
+		opacity:0;
+		margin-top:10%;
+		transition:0.5s ease-in-out;
+	}
+	.text h1 {
+		font-size:4em;
+		letter-spacing:-0.05em;
+		line-height:1em;
+		font-weight:900;
+		width:60%;
+	}
+	.text h2 {
+		font-weight:400;
+		font-size:1em;
+		font-style:italic;
+	}
+	.sticky h1 {
+		width:100%;
+		font-size:3em;
+	}
+	.sticky h2 {
+		font-size:0.8em;
+		text-transform:uppercase;
+		letter-spacing:0.1em;
+	}
+	.center_aligner {
+		overflow:none;
+		width:100%;
+		display:flex;
+		align-items:center;
+		justify-content:center;
+		margin:2% 0%;
+	}
+	iframe {
+		border:0.5em solid black;
+		width:900px;
+		height:500px;
+	}
+	.tableauPlaceholder{
+		width:50%;
+	}
+	img{
+		text-align:center;
+		margin:0%;
+		display:inline-block;
+		border:0.5em solid black;
+	}
+	.caption {
+		font-size:0.8em;
+		color:#666666;
+	}
+	.small {
+		width:30%;
+	}
+	.large {
+		width:80%;
+		display:block;
+	}
+	@keyframes fadeIn {
+		0%{
+			opacity:0;
+		}
+		100%{
+			opacity:1;
+		}
+	}
+	@media screen and (max-width:767px){
+		.sticky {
+	/*		bottom:0;*/
+			width:50%;
+			float:none;
+			margin:auto;
+			display:flex;
+			line-height:2em;
+		}
+		.sticky h1 {
+			font-size:2em;
+			line-height:2em;
+		}
+		.sticky h2 {
+			font-size:0.5em;
+		}
+		#counter {
+			font-size:5em;
+		}
+		.leftside {
+			width: 85%;
+    		padding: 5% 10% 5% 5%;
+		}
+		.small {
+			width:80%;
+		}
+		.title {
+			height:80vh;
+		}
+		.text h1 {
+			font-size:2.5em;
+			width:80%;
+		}
+		.text {
+			margin:10% 5%;
+		}
+		iframe {
+			height:300px;
+		}
+
+	}
+</style>
+<body>
+
+<!-- nav -->
+<nav>
+	<h3>Spotify Listening Habits</h3>
+</nav>
+
+<!-- text -->
+<div class='my project'>
+	<div class='aligner'>
+		<h1></h1>
+		<h2>About The Project</h2>	
+	</div>
+</div>
+
+
+<div class='text'>
+	<h2>Molly Alexander</h2>	
+	Below are a series of visual maps which plot each song with a unique data point. I sourced my data from Spotify's annual "Year in Review" playlists for the years 2016-2018. I manually sorted each song by location, gender, and musician before translating it into a map.
+	288 songs are visually mapped by their location and genre to gain insight into the progression of my personal listening habits. Scroll down to learn more about each year.
+</div>
+
+<div class='text'>
+	<h1>Measuring location & genre for 288 songs </h1>
+	After filtering my data by genre, location, and even gender distribution of the bands, I narrowed my investigation to the relation between genre and location from 2016-2018. 
+	
+
+</div>
+
+<!-- image 1 -->
+<div class='center_aligner'>
+	<!-- change line 120 if you want to change the size of the image -->
+	<img class='' src="images/2016crossface.gif" alt=”animated” > 	
+</div>
+
+<div class='text'>
+	<h1>2016 sorted by genre </h1>
+After comparing the genre distributions for each year, 2016 stood out with the most diverge songs. After this year, songs would relocate from Europe to the United States and Australia. Major 2016 insights are explored below.
+
+<div class='text'>
+	
+</div>
+
+<!-- interactive embed, adjust the width and height as necessary, copy lines 155 to 157 to create a new interactive embed --> 
+<div class='center_aligner'>
+	<img class='' src="images/2016allgenre.gif" alt=”animated” >
+
+</div>
+
+
+<div class='text'>
+	<h1>What factors influenced my listening habits?</h1>
+	 I referenced my old journals and photographs to understand what physical and emotional conditions cooresponded with the data. Below are a few significant data points paired with a probable moment in my personal timeline.
+</div>
+
+
+<!-- counter -->
+<div class='header sticky step' id='dynamic_sticky1'>
+</div>
+
+
+<div class='leftside'>
+
+	<div class='text progressive'>
+	<h1>Travel impacts listening habits</h1>
+	 
+In 2016, I discovered new music after a trip to London and Oxford, leading  47% of my songs to originate from England and 12% from NY. But these values shifted after moving to NYC in 2017. By 2018, NY musicians made up 51% of the songs and English musicians dropped to 18%.
+
+	</div>
+
+	<div class='text progressive'>
+	<h1>Musicians adapt to profitable trends</h1>
+	In 2016, Hip-Hop was one of the least listened to genres with 0% of my songs. I primarily listened to pop and indie as this made up 47%. However, with these listening habits, I uncovered Pop and Indie songs that integrated Hip-Hop elements into their music and soon the frequency of this genre increased. By 2018 Hip-Hop made up 26% of my songs whereas Pop and Indie made up 32% of 96 songs.
+	</div>
+
+	<div class='text progressive end'>
+	<h1>Expanding my social circle</h1>
+	 With the start of college, I met people from different states who introduced me to their favorite local bands. This led me to attend more festivals and local shows and I saw an increase in U.S based musicians.In 2016, 71% of the 21 Pop songs I listened to originated from England and 14% were from the U.S.A.
+But  in 2018, only 11% of 30 total Pop songs originated from England and instead 67% were from the United States. 
+
+	</div>
+
+</div>
+
+
+	<!-- change line 120 if you want to change the size of the image -->
+
+</div>
+
+</div>
+
+	<h1>Takeaways</h1>
+	
+After analyzing my listening habits from 2016-2019 I uncovered the role  travel and individualized social changes play in shaping my listening habits. In the 3 year span, I increased my listening habits within the U.S.A, Australia, and decreased my listening within Europe. Genre-wise, the prominence of hip-hop, rap, and psychadelic music increased as shown below. I was surprised to see the frequency of songs shift from England and Sweden to New York and California as my own recollection did not notice this.
+This project allowed me to back my personal memory of my music past with quantitative data to better understand how my listening habits may evolve in the future.
+<div class='center_aligner'>
+	<img class='extraSMALL' src="images/GENRE.gif" alt=”animated” >	
+</div>
+
+
+</div>
+
+<!-- image 3 -->
+<div class='center_aligner'>
+	<object type="C:\Users\Molly\Downloads\meta-chart.svg" data="meta-chart.svg"></object>	
+</div>
+
+</body>
+<script type="text/javascript">
+
+// instantiate the scrollama
+const scroller = scrollama();
+const scroller2 = scrollama();
+
+scroller
+  .setup({
+    step: ".text",
+    offset: 0.9,
+  })
+  .onStepEnter(response => {
+    // { element, index, direction }
+    el=response.element;
+    el.style.opacity=1;
+    el.style.marginTop='5%';    
+  })
+  .onStepExit(response => {
+    // { element, index, direction }  
+    el=response.element;
+  })
+  ;
+ // setup resize event
+window.addEventListener("resize", scroller.resize);
+
+scroller2
+  .setup({
+    step: ".progressive",
+    offset: 0.6,
+  })
+  .onStepEnter(response => {
+    // { element, index, direction }
+    el=response.element;
+    el.style.opacity=1;
+    if(response.index==0 || 1 || 2){
+    	stick('dynamic_sticky1')
+    	response.direction=='down'
+    	if(response.index==0){
+    		count(10,39,1,'Songs from NY','Increase','dynamic_sticky1')
+    	} else if (response.index==1){
+    		count(0,26,1,'Hip-Hop Songs','Increase','dynamic_sticky1')
+    	} else if (response.index==2){
+    		count(0,53,1,'Pop Songs from The USA','Increase','dynamic_sticky1')
+    	}
+    }
+  })
+  .onStepExit(response => {
+    // { element, index, direction }  
+    el=response.element;
+    console.log(response.index)
+    if(response.index==2){
+    	unstick('dynamic_sticky1')
+    }
+    el.style.opacity=0;
+  })
+  ;
+ // setup resize event
+window.addEventListener("resize", scroller2.resize);
+
+function count(number1, number2, step, title, label, location_id, prefix='+', suffix='%'){
+	target = document.querySelector('#'+location_id)
+	console.log(target)
+	let text=number1;
+
+	setInterval(function(){
+		if(text!=number2){
+			num = text+step
+			if(num % 1 == 0){
+				text = num
+			} else {
+				text = parseFloat(num.toFixed(2))
+			}
+			target.innerHTML="<div class='aligner'><h1>"+title+"</h1><div id='counter'>"+prefix+text+suffix+"</div><h2>"+label+"</h2></div>"
+		}
+	}, 30);
+}
+
+function stick(location_id){
+	target = document.querySelector('#'+location_id)
+	target.style.position="sticky"
+}
+
+function unstick(location_id){
+	target = document.querySelector('#'+location_id)
+	target.style.position="relative"
+}
+
+</script>
+
+</html>
